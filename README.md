@@ -49,8 +49,8 @@ Run the following code: freshclam.exe // This will update the current library. Y
 <h3>5: Running the Service</h3>
 <h5>Open your Windows Services window and start the service: ClamAV ClamD
 If you wish, you can also edit the service to launch at startup now.</h5>
-<h3>Install Visual Studio 2022</h3>
-<h3>Install SQL Server</h3>
+<h3>6: Install Visual Studio 2022</h3>
+<h3>7: Install SQL Server</h3>
 
 # Instalation Resources
 <h3>Here are some good resources about installation for ClamAV</h3>
