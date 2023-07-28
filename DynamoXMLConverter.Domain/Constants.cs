@@ -14,6 +14,20 @@
                 public const string ProcessedFiles = "processed-files";
                 public const string JsonText = "json-text";
             }
+
+            public static class ErrorMessages
+            {
+                public const string InvalidIdentifier = "Invalid identifier";
+                public const string FileNotFound = "File not found";
+            }
+        }
+
+        public static class ClamAV
+        {
+            public static class ErrorMessages
+            {
+                public const string ClamServerNotFound = "ClamAv server is not responding";
+            }
         }
 
         public static class Hangfire

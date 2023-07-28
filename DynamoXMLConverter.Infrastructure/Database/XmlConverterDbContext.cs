@@ -24,5 +24,6 @@ namespace DynamoXMLConverter.Infrastructure.Database
         }
 
         public DbSet<JsonFile> JsonFiles { get; set; }
+        public DbSet<UnhandledExceptionLog> UnhandledExceptionLogs { get; set; }
     }
 }

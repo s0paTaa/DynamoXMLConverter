@@ -6,6 +6,7 @@ using System.Net;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using DynamoXMLConverter.Domain.Models.Http;
+using DynamoXMLConverter.Domain.Logging;
 
 namespace DynamoXMLConverter.Infrastructure.Middlewares
 {
@@ -30,15 +31,34 @@ namespace DynamoXMLConverter.Infrastructure.Middlewares
             }
             catch (Exception ex)
             {
-                // Use _resolver to get service and store the error in Database
+                var logger = _resolver.GetService<IDynamoLogger>();
+
+                // Log exception in the database
+                await logger.LogException(ex);
+
                 httpContext.Response.ContentType = "application/json";
                 httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                string message = _enviroment.IsProduction() ? "Something went wrong." : ex.Message;
-
-                await httpContext.Response.WriteAsync(JsonConvert.SerializeObject(new HttpErrorResponse("server_error", message), new JsonSerializerSettings
+                string message = string.Empty;
+                
+                if (_enviroment.IsProduction())
                 {
-                    ContractResolver = new CamelCasePropertyNamesContractResolver()
-                }));
+                    message = JsonConvert.SerializeObject(new HttpErrorResponse("server_error", "Something went wrong"), Formatting.Indented, new JsonSerializerSettings
+                    {
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    });
+                }
+                else
+                {
+                    message = JsonConvert.SerializeObject(
+                        new HttpErrorResponse("server_error", new HttpMessageModel(ex.Message, ex.StackTrace)), 
+                        Formatting.Indented, 
+                        new JsonSerializerSettings
+                    {
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    });
+                }
+
+                await httpContext.Response.WriteAsync(message, System.Text.Encoding.ASCII);
             }
         }
     }

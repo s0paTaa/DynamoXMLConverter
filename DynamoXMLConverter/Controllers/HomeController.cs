@@ -5,7 +5,6 @@ using DynamoXMLConverter.Infrastructure.Extensions;
 using DynamoXMLConverter.Models.Home;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Text;
 
 namespace DynamoXMLConverter.Controllers
 {

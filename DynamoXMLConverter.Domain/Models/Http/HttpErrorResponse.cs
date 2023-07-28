@@ -15,6 +15,12 @@ namespace DynamoXMLConverter.Domain.Models.Http
             Message = message;
         }
 
+        public HttpErrorResponse(string code, HttpMessageModel model)
+        {
+            Code = code;
+            MessageHolder = model;
+        }
+
         public HttpErrorResponse(string code, dynamic data)
         {
             Code = code;
@@ -26,6 +32,9 @@ namespace DynamoXMLConverter.Domain.Models.Http
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string Message { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public HttpMessageModel MessageHolder { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public dynamic Data { get; set; }

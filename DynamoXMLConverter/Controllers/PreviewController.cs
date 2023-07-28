@@ -26,7 +26,7 @@ namespace DynamoXMLConverter.Controllers
         {
             if (Guid.TryParse(identifier, out Guid value) == false)
             {
-                TempData[Constants.File.RouteParams.ErrorMessage] = "Invalid identifier";
+                TempData[Constants.File.RouteParams.ErrorMessage] = Constants.File.ErrorMessages.InvalidIdentifier;
                 return RedirectToAction("ShowJsonFile");
             }
 
@@ -34,7 +34,7 @@ namespace DynamoXMLConverter.Controllers
 
             if (file == null)
             {
-                TempData[Constants.File.RouteParams.ErrorMessage] = "File not found";
+                TempData[Constants.File.RouteParams.ErrorMessage] = Constants.File.ErrorMessages.FileNotFound;
                 return RedirectToAction("ShowJsonFile");
             }
 
