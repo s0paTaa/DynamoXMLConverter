@@ -21,6 +21,8 @@ which is needed to find the existing file and preview section desinged a little 
   <li>File conversion from XML to JSON using Newtonsoft.Json</li>
   <li>Using strong middleware to prevent XSS attacks</li>
   <li>Global exception handler</li>
+  <li>Simpleinjector Dependency Injection</li>
+  <li>Several code extensions</li>
   <li>Redirection from the pages</li>
 </ul>
 
