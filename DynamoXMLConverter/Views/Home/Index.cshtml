@@ -1,0 +1,153 @@
+﻿@using DynamoXMLConverter.Models.Home;
+@model HomePageDisplayModel;
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="main-section">
+    <div class="header-text">
+        <span>Welcome to Dynamo XML to JSON converter</span>
+    </div>
+    <div class="article">
+        <div class="article-nav">
+            <ul>
+                <li><a formmethod="get" asp-controller="Preview" asp-action="ShowJsonFile">Preview page</a></li>
+                <li><a formmethod="get" asp-controller="File" asp-action="Download">Download page</a></li>
+            </ul>
+        </div>
+
+        <div class="article-header">
+            <div class="article-info-card">
+                <div class="info-holder">
+                    <i class="bi bi-info-circle"></i>
+                    <div class="info-text"><span>Information</span></div>
+                </div>
+                <span>
+                    <strong>XML</strong> to <strong>JSON</strong> converter is a simple file conversion app that applies strong validations on the uploaded file
+                    You have options to preview and download your converted file. Current version support only one conversion method,
+                    but in the next release will be possible a conversion to <strong>PDF</strong> file. In the above there is a navigation bar that you can use to preview or download
+                    existing file by providing uniqe identifier.
+                </span>
+            </div>
+            <div class="article-warning-card">
+                <div class="warning-holder">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <div class="warning-text">Warning</div>
+                </div>
+                <span>
+                    As you know almost every site conversion have file size limits. Since the first release we have not applied yet a functionality to store large files.
+                    So you have ability to upload one or multiple files. Each file have limit to <strong>4 MB</strong> and the maximum limit of uploaded files are <strong>256 MB</strong>.
+                </span>
+            </div>
+        </div>
+
+        <div class="article-body">
+            <div class="article-body-header">
+                <i class="bi bi-filetype-xml"></i>
+            </div>
+            <div class="article-body-form1">
+                <span class="text">Convert XML files</span>
+                <form id="upload-files-form" method="post" enctype="multipart/form-data">
+                    <label class="drop-container" id="multiple-files-drop">
+                        <span class="drop-title">Drop multiple files here</span>
+                        <span>or</span>
+                        <input class="choice-input" accept="text/xml" type="file" id="multiple-files-input" name="files" multiple required>
+                    </label>
+                    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                    {
+                        <div id="input-error"><span>@Model.ErrorMessage</span></div>
+                    }
+                    <div id="drop-multiple-files-success"><span>Files attached successfully</span></div>
+                    <div id="drop-multiple-files-error"><span>Cannot upload a file larger then <strong>4 MB</strong></span></div>
+                    <input value="Upload" class="submit-btn" type="submit" />
+                </form>
+            </div>
+        </div>
+        @if (Model.UploadedFiles.Any())
+        {
+            <div class="article-result-message">
+                <span>Files uploaded successfully. Remember, your files will be active for 10 days, after that they will be automaticaly removed!</span>
+            </div>
+            <div class="article-result-section">
+                @foreach (var file in Model.UploadedFiles)
+                {
+                    <form class="result-holder" method="post">
+                        <strong>@file.FileName</strong>
+                        <div class="identifier-info">
+                            <input type="text" id="identifier" name="identifier" value="@file.FileIdentifier">
+                        </div>
+                        <div class="buttons">
+                            <input asp-controller="Preview" asp-action="ShowJsonFile" class="preview" type="submit" value="Preview" />
+                            <input asp-controller="File" asp-action="Download" class="download" type="submit" value="Download" />
+                        </div>
+                    </form>
+                }
+            </div>
+        }
+        <div class="footer">
+            <span>DynamoXmlConverter have all rights reserved. &copy;Copyright 2023</span>
+            <span>Contact us: <strong>stelyan.nikolov98@gmail.com</strong></span>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    const multipleFilesDropContainer = document.getElementById("multiple-files-drop");
+    const multipleFilesInput = document.getElementById("multiple-files-input");
+    const multipleFilesSuccessMessage = document.getElementById("drop-multiple-files-success");
+    const multipleFilesErrorMessage = document.getElementById("drop-multiple-files-error");
+    const uploadFilesForm = document.getElementById("upload-files-form");
+
+    hideElement(multipleFilesErrorMessage);
+    hideElement(multipleFilesSuccessMessage);
+
+    multipleFilesInput.onchange = function(e) {
+        toggleUploadErrorMessage(multipleFilesInput.files);
+        toggleUploadSuccessMessage(multipleFilesInput.files);
+    };
+
+    multipleFilesDropContainer.addEventListener("dragover", (e) => {
+        e.preventDefault()
+    }, false);
+
+    multipleFilesDropContainer.addEventListener("drop", (e) => {
+        e.preventDefault()
+        multipleFilesInput.files = e.dataTransfer.files;
+
+        toggleUploadErrorMessage(multipleFilesInput.files);
+        toggleUploadSuccessMessage(multipleFilesInput.files);
+    });
+
+    function toggleUploadErrorMessage(files) {
+        var array = Array.from(files);
+        hideElement(multipleFilesErrorMessage);
+
+        array.forEach(f => {
+            const fileSize = (f.size / 1024 / 1024).toFixed(4) // Get the file size in MB
+
+            if (fileSize > 4) {
+                uploadFilesForm.reset();
+                showElement(multipleFilesErrorMessage);
+                return;
+            }
+        });
+    }
+
+    function toggleUploadSuccessMessage(files){
+        if (files.length > 0) {
+            showElement(multipleFilesSuccessMessage);
+        }
+        else {
+            hideElement(multipleFilesSuccessMessage);
+        }
+    }
+
+    function showElement(element) {
+        element.style.display = "inline-block";
+    }
+
+    function hideElement(element) {
+        element.style.display = "none";
+    }
+</script>
+

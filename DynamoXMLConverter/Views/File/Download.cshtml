@@ -1,0 +1,45 @@
+﻿@using DynamoXMLConverter.Domain.Models.Shared;
+@model BaseResponseModel;
+@{
+    ViewData["Title"] = "Download Page";
+}
+
+<div class="download-main-section">
+    <div class="header-text">
+        <span>Download your file here</span>
+    </div>
+
+    <div class="article">
+        <div class="article-header">
+            <div class="home-button-holder">
+                <a formmethod="get" asp-controller="Home" asp-action="Index">Home page</a>
+            </div>
+            <div class="article-info-card">
+                <div class="info-holder">
+                    <i class="bi bi-info-circle"></i>
+                    <div class="info-text"><span>Information</span></div>
+                </div>
+                <span>
+                    Note that every stored <strong>JSON</strong> file have expiration date and if the expiration date is expired, the file will be removed
+                    and you will not have ability to download id.
+                </span>
+            </div>
+        </div>
+
+        <div class="article-body">
+            <form method="post">
+                <span>Download your file</span>
+                <div class="inputs">
+                    <input placeholder="Enter identifier here" type="text" name="identifier" required />
+                    <input type="submit" value="Download" />
+                </div>
+            </form>
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="input-error">
+                    <span>@Model.ErrorMessage</span>
+                </div>
+            }
+        </div>
+    </div>
+</div>
