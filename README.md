@@ -22,6 +22,7 @@ which is needed to find the existing file and preview section desinged a little 
   <li>Using strong middleware to prevent XSS attacks</li>
   <li>Global exception handler</li>
   <li>Simpleinjector Dependency Injection</li>
+  <li>Logging for unhandled exception in database</li>
   <li>Several code extensions</li>
   <li>Redirection from the pages</li>
 </ul>
