@@ -44,10 +44,32 @@ namespace DynamoXMLConverter.Controllers
             return File(fileBytes, "application/download", file.FileName);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Delete([FromForm] string identifier)
+        {
+            if (Guid.TryParse(identifier, out Guid value) == false)
+            {
+                TempData[Constants.File.RouteParams.ErrorMessage] = Constants.File.ErrorMessages.InvalidIdentifier;
+                return RedirectToAction("Download");
+            }
+
+            bool isDeleteSuccessful = await _fileService.DeleteByIdentifier(value);
+
+            if (!isDeleteSuccessful)
+            {
+                TempData[Constants.File.RouteParams.ErrorMessage] = Constants.File.ErrorMessages.FileNotFound;
+                return RedirectToAction("Download");
+            }
+
+            TempData[Constants.File.RouteParams.DeleteSuccessMessage] = Constants.File.SuccessMessages.DeleteSuccessMessage;
+            return RedirectToAction("Download");
+        }
+
         private BaseResponseModel InitializeModel()
         {
             var model = new BaseResponseModel();
             model.ErrorMessage = TempData.TryGetValue<string>(Constants.File.RouteParams.ErrorMessage);
+            model.SuccessMessage = TempData.TryGetValue<string>(Constants.File.RouteParams.DeleteSuccessMessage);
 
             // Always clear the temp data. By default when it is observed is automaticaly cleared but in the same session.
             // So if the session is not expired, the data will stay and the page may display same data

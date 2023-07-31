@@ -40,6 +40,26 @@
                     <span>@Model.ErrorMessage</span>
                 </div>
             }
+
+            <form method="post">
+                <span>Delete your file</span>
+                <div class="inputs">
+                    <input placeholder="Enter identifier here" type="text" name="identifier" required />
+                    <input asp-action="Delete" type="submit" value="Delete" />
+                </div>
+            </form>
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="input-error">
+                    <span>@Model.ErrorMessage</span>
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+            {
+                <div class="input-success">
+                    <span>@Model.SuccessMessage</span>
+                </div>
+            }
         </div>
     </div>
 </div>

@@ -331,6 +331,18 @@ body {
     row-gap: 2.5em;
 }
 
+.container .download-main-section .article .article-body .input-success span {
+    background-color: #ccffcc;
+    border-radius: 0.4em;
+    font-size: 0.8em;
+    font-family: 'Lucida Console';
+    padding: 1em;
+}
+
+.container .download-main-section .article .article-body .input-success {
+    display: flex;
+}
+
 .container .preview-main-section .article .article-body .input-error,
 .container .download-main-section .article .article-body .input-error {
     display: flex;

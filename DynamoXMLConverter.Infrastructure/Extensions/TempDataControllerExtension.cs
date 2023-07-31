@@ -22,6 +22,9 @@ namespace DynamoXMLConverter.Infrastructure.Extensions
                 case Constants.File.RouteParams.JsonText:
                     result = tempData[key] as TResult;
                     break;
+                case Constants.File.RouteParams.DeleteSuccessMessage:
+                    result = tempData[key] as TResult;
+                    break;
             }
 
             return result;

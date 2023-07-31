@@ -22,6 +22,22 @@ namespace DynamoXMLConverter.Infrastructure.Services
             _fileHelperService = fileHelperService ?? throw new ArgumentNullException(nameof(fileHelperService));
         }
 
+        public async Task<bool> DeleteByIdentifier(Guid identifier)
+        {
+            JsonFile file = await _fileRepository.GetAllAsNoTracking()
+                .Where(f => f.Identifier.Equals(identifier))
+                .SingleOrDefaultAsync();
+
+            if (file == null)
+            {
+                return false;
+            }
+
+            await _fileRepository.Delete(file);
+
+            return true;
+        }
+
         public Task<JsonFileModel?> GetJsonFileByIdentifier(Guid Identifier)
         {
             return _fileRepository.GetAllAsNoTracking()
@@ -45,10 +61,28 @@ namespace DynamoXMLConverter.Infrastructure.Services
             }
 
             ICollection<JsonFile> entities = new List<JsonFile>();
+            IDictionary<string, string> convertedFiles = new Dictionary<string, string>();
 
             foreach (var file in formFiles)
             {
-                JsonFile entity = await ConvertXmlFileToJsonEntity(file);
+                string fileNameWithoutExtension = file.FileName.Split('.')[0];
+                string convertedXml = await ConvertXmlFileToJson(file);
+                convertedFiles[fileNameWithoutExtension] = convertedXml;
+            }
+
+            var convertedFileValues = convertedFiles.Values.ToList();
+            bool hasExistingFileInDatabse = await _fileRepository.GetAllAsNoTracking()
+                .AnyAsync(f => convertedFileValues.Contains(f.Value));
+
+            if (hasExistingFileInDatabse)
+            {
+                responseModel.ErrorMessage = Constants.File.ErrorMessages.FileAlreadyExist;
+                return responseModel;
+            }
+
+            foreach (var file in convertedFiles)
+            {             
+                JsonFile entity = new JsonFile(file.Key, file.Value, DateTime.UtcNow.AddDays(Constants.File.FileLifetimeInDays));
                 entities.Add(entity);
             }
 
@@ -65,10 +99,9 @@ namespace DynamoXMLConverter.Infrastructure.Services
         }
 
         #region PrivateMethods
-        private async Task<JsonFile> ConvertXmlFileToJsonEntity(IFormFile file)
+        private async Task<string> ConvertXmlFileToJson(IFormFile file)
         {
             var xmlDoc = new XmlDocument();
-            string fileNameWithoutExtension = file.FileName.Split('.')[0];
 
             using (MemoryStream stream = new MemoryStream())
             {
@@ -77,10 +110,7 @@ namespace DynamoXMLConverter.Infrastructure.Services
                 xmlDoc.Load(stream);
             }
 
-            string json = JsonConvert.SerializeXmlNode(xmlDoc);
-            string jsonFileName = $"{fileNameWithoutExtension}.json";
-
-            return new JsonFile(jsonFileName, json, DateTime.UtcNow.AddDays(Constants.File.FileLifetimeInDays));
+            return JsonConvert.SerializeXmlNode(xmlDoc);
         }
         #endregion
     }

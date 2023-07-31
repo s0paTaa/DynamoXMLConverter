@@ -13,12 +13,19 @@
                 public const string ErrorMessage = "error-message";
                 public const string ProcessedFiles = "processed-files";
                 public const string JsonText = "json-text";
+                public const string DeleteSuccessMessage = "delete-success-message";
             }
 
             public static class ErrorMessages
             {
                 public const string InvalidIdentifier = "Invalid identifier";
                 public const string FileNotFound = "File not found";
+                public const string FileAlreadyExist = "File already exist";
+            }
+
+            public static class SuccessMessages
+            {
+                public const string DeleteSuccessMessage = "File is deleted successfully";
             }
         }
 
