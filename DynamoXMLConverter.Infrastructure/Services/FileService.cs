@@ -24,7 +24,7 @@ namespace DynamoXMLConverter.Infrastructure.Services
 
         public async Task<bool> DeleteByIdentifier(Guid identifier)
         {
-            JsonFile file = await _fileRepository.GetAllAsNoTracking()
+            JsonFile? file = await _fileRepository.GetAllAsNoTracking()
                 .Where(f => f.Identifier.Equals(identifier))
                 .SingleOrDefaultAsync();
 
