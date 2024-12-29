@@ -14,11 +14,11 @@ builder.Services.RegisterAppServices(container, builder.Configuration);
 // Build the application
 var app = builder.Build();
 
-// Configure app via custom extension
-app.ConfigureApp(container);
-
 // Initialize migrations
 await app.MigrateDatabase();
+
+// Configure app via custom extension
+app.ConfigureApp(container);
 
 // Run app async
 await app.RunAsync();
