@@ -23,7 +23,8 @@ namespace DynamoXMLConverter.Infrastructure.Database
             Entry<TEntity>(entity).State = entityState;
         }
 
-        public DbSet<JsonFile> JsonFiles { get; set; }
+        public DbSet<DynamoFile> Files { get; set; }
+
         public DbSet<UnhandledExceptionLog> UnhandledExceptionLogs { get; set; }
     }
 }

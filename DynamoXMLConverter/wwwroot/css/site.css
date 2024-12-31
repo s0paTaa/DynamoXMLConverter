@@ -86,6 +86,12 @@ body {
     display: flex;
 }
 
+.container .main-section .article .article-nav .selected {
+    opacity: 0.5;
+    background-color: gray;
+    cursor: not-allowed;
+}
+
 .container .main-section .article .article-nav ul {
     list-style-type: none;
     margin: auto;
@@ -100,20 +106,13 @@ body {
     border-radius: 0.4em;
     background-color: #4dc3ff;
     margin-left: 0.4em;
-}
-
-.container .main-section .article .article-nav ul li a {
+    cursor: pointer;
     display: block;
     color: white;
     text-align: center;
     padding: 0.7em 1em;
     text-decoration: none;
     border-radius: 0.4em;
-}
-
-.container .main-section .article .article-nav ul li a:hover {
-    background-color: gray;
-    transition: 0.2s;
 }
 
 .container .main-section .article .article-header,
@@ -369,11 +368,15 @@ body {
     padding: 1em;
 }
 
-.container .main-section .article .article-body .article-body-form1 form #drop-multiple-files-error {
+.container .main-section .article .article-body .article-body-form1 form #drop-multiple-files-error,
+.container .main-section .article .article-body .article-body-form1 form #drop-multiple-files-xml-error,
+.container .main-section .article .article-body .article-body-form1 form #drop-multiple-files-json-error {
     display: flex;
 }
 
-.container .main-section .article .article-body .article-body-form1 form #drop-multiple-files-error span {
+.container .main-section .article .article-body .article-body-form1 form #drop-multiple-files-error span,
+.container .main-section .article .article-body .article-body-form1 form #drop-multiple-files-xml-error span,
+.container .main-section .article .article-body .article-body-form1 form #drop-multiple-files-json-error span {
     background-color: #ffcccc;
     border-radius: 0.4em;
     font-size: 0.8em;

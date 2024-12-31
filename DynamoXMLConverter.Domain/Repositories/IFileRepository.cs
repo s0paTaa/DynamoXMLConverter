@@ -3,7 +3,7 @@ using DynamoXMLConverter.Domain.Repositories.Base;
 
 namespace DynamoXMLConverter.Domain.Repositories
 {
-    public interface IFileRepository : IBaseRepository<JsonFile>
+    public interface IFileRepository : IBaseRepository<DynamoFile>
     {
     }
 }

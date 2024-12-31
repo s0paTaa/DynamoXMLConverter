@@ -38,7 +38,7 @@ namespace DynamoXMLConverter.Controllers
                 return RedirectToAction("ShowJsonFile");
             }
 
-            TempData[Constants.File.RouteParams.JsonText] = file.JsonText;
+            TempData[Constants.File.RouteParams.JsonText] = file.Text;
             return RedirectToAction("ShowJsonFile");
         }
 

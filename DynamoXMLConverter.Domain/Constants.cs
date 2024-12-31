@@ -1,4 +1,6 @@
-﻿namespace DynamoXMLConverter.Domain
+﻿using DynamoXMLConverter.Domain.Models.File;
+
+namespace DynamoXMLConverter.Domain
 {
     public static class Constants
     {
@@ -6,7 +8,12 @@
         {
             public const long MultipartBodyLengthInBytes = 268435456; // 256 MB
             public const long MultipartBodyLengthForFileInBytes = 4194304; // 4 MB
-            public const int FileLifetimeInDays = 10;
+            public const int FileLifetimeInDays = 3;
+            public static readonly Dictionary<string, string> AllowedMimeTypes = new() 
+            { 
+                { "application/json", ".json" },
+                { "text/xml", ".xml" }
+            };
 
             public static class RouteParams
             {

@@ -1,6 +1,7 @@
 ﻿using DynamoXMLConverter.Domain;
 using DynamoXMLConverter.Domain.Entities;
 using DynamoXMLConverter.Domain.Models.File;
+using DynamoXMLConverter.Domain.Models.Shared;
 using DynamoXMLConverter.Domain.Repositories;
 using DynamoXMLConverter.Domain.Services;
 using DynamoXMLConverter.Infrastructure.Extensions;
@@ -24,8 +25,8 @@ namespace DynamoXMLConverter.Infrastructure.Services
 
         public async Task<bool> DeleteByIdentifier(Guid identifier)
         {
-            JsonFile? file = await _fileRepository.GetAllAsNoTracking()
-                .Where(f => f.Identifier.Equals(identifier))
+            DynamoFile? file = await _fileRepository.GetAllAsNoTracking()
+                .Where(f => f.ID.Equals(identifier))
                 .SingleOrDefaultAsync();
 
             if (file == null)
@@ -38,21 +39,23 @@ namespace DynamoXMLConverter.Infrastructure.Services
             return true;
         }
 
-        public Task<JsonFileModel?> GetJsonFileByIdentifier(Guid Identifier)
+        public Task<DynamoFileModel?> GetJsonFileByIdentifier(Guid Identifier)
         {
             return _fileRepository.GetAllAsNoTracking()
-                .Where(f => f.Identifier.Equals(Identifier))
-                .Select(f => new JsonFileModel
+                .Where(f => f.ID.Equals(Identifier))
+                .Select(f => new DynamoFileModel
                 {
                     FileName = f.Name,
-                    JsonText = f.Value
+                    Text = f.Value,
+                    ContentType = f.ContentType,
+                    Extension = f.Extension
                 }).FirstOrDefaultAsync();
         }
 
         public async Task<ProcessFilesModel> ProcessFiles(IEnumerable<IFormFile> formFiles)
         {
-            var responseModel = new ProcessFilesModel();
-            var filesValidationResult = await _fileHelperService.ValidateUploadedFiles(formFiles);
+            ProcessFilesModel responseModel = new();
+            BaseResponseModel filesValidationResult = await _fileHelperService.ValidateUploadedFiles(formFiles);
 
             if (!filesValidationResult.IsSucceed)
             {
@@ -60,29 +63,49 @@ namespace DynamoXMLConverter.Infrastructure.Services
                 return responseModel;
             }
 
-            ICollection<JsonFile> entities = new List<JsonFile>();
-            IDictionary<string, string> convertedFiles = new Dictionary<string, string>();
+            ICollection<DynamoFile> entities = [];
+            List<DynamoFileModel> convertedFiles = new();
 
-            foreach (var file in formFiles)
+            foreach (IFormFile file in formFiles)
             {
                 string fileNameWithoutExtension = file.FileName.Split('.')[0];
-                string convertedXml = await ConvertXmlFileToJson(file);
-                convertedFiles[fileNameWithoutExtension] = convertedXml;
-            }
+                string convertedText, targetContentType, targetExtension;
 
-            var convertedFileValues = convertedFiles.Values.ToList();
-            bool hasExistingFileInDatabse = await _fileRepository.GetAllAsNoTracking()
-                .AnyAsync(f => convertedFileValues.Contains(f.Value));
+                if (Constants.File.AllowedMimeTypes.ContainsKey(file.ContentType))
+                {
+                    switch (file.ContentType)
+                    {
+                        case "application/json":
+                            convertedText = await ConvertJsonFileToXml(file);
+                            targetContentType = "text/xml";
+                            targetExtension = ".xml";
+                            break;
+                        case "text/xml":
+                            convertedText = await ConvertXmlFileToJson(file);
+                            targetContentType = "application/json";
+                            targetExtension = ".json";
+                            break;
+                        default:
+                            throw new Exception("Invalid contentType");
+                    }
 
-            if (hasExistingFileInDatabse)
-            {
-                responseModel.ErrorMessage = Constants.File.ErrorMessages.FileAlreadyExist;
-                return responseModel;
+                    convertedFiles.Add(new DynamoFileModel
+                    {
+                        FileName = fileNameWithoutExtension,
+                        Text = convertedText,
+                        ContentType = targetContentType,
+                        Extension = targetExtension
+                    });
+                }
+                else
+                {
+                    throw new Exception("Invalid contentType");
+                }
             }
 
             foreach (var file in convertedFiles)
-            {             
-                JsonFile entity = new JsonFile(file.Key, file.Value, DateTime.UtcNow.AddDays(Constants.File.FileLifetimeInDays));
+            {
+                DynamoFile entity = new(file, DateTime.UtcNow.AddDays(Constants.File.FileLifetimeInDays));
                 entities.Add(entity);
             }
 
@@ -91,26 +114,33 @@ namespace DynamoXMLConverter.Infrastructure.Services
             responseModel.IsSucceed = true;
             responseModel.Files = entities.Select(e => new FileDisplayModel
             {
-                FileIdentifier = e.Identifier.ToString(),
+                FileIdentifier = e.ID.ToString(),
                 FileName = e.Name
             });
 
             return responseModel;
         }
 
+        // Add try catch and logging
         #region PrivateMethods
         private async Task<string> ConvertXmlFileToJson(IFormFile file)
         {
-            var xmlDoc = new XmlDocument();
-
-            using (MemoryStream stream = new MemoryStream())
-            {
-                await file.CopyToAsync(stream);
-                stream.ResetPosition();
-                xmlDoc.Load(stream);
-            }
+            using MemoryStream stream = new();
+            XmlDocument xmlDoc = new();
+            await file.CopyToAsync(stream);
+            stream.ResetPosition();
+            xmlDoc.Load(stream);
 
             return JsonConvert.SerializeXmlNode(xmlDoc);
+        }
+
+        private async Task<string> ConvertJsonFileToXml(IFormFile file)
+        {
+            using StreamReader reader = new(file.OpenReadStream());
+            string json = await reader.ReadToEndAsync();      
+            XmlDocument? xmlDoc = JsonConvert.DeserializeXmlNode(json);
+
+            return xmlDoc.InnerXml;
         }
         #endregion
     }

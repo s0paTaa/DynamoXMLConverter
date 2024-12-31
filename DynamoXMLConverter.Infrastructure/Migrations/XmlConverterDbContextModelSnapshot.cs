@@ -17,23 +17,33 @@ namespace DynamoXMLConverter.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.9")
+                .HasAnnotation("ProductVersion", "9.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("DynamoXMLConverter.Domain.Entities.JsonFile", b =>
+            modelBuilder.Entity("DynamoXMLConverter.Domain.Entities.DynamoFile", b =>
                 {
-                    b.Property<Guid>("Identifier")
+                    b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
                         .HasDefaultValueSql("NEWID()");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DateExpire")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Extension")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -44,13 +54,13 @@ namespace DynamoXMLConverter.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Identifier")
+                    b.HasKey("ID")
                         .HasName("PK_Identifier");
 
-                    b.HasIndex("Identifier")
+                    b.HasIndex("ID")
                         .IsUnique();
 
-                    b.ToTable("JsonFiles");
+                    b.ToTable("Files");
                 });
 
             modelBuilder.Entity("DynamoXMLConverter.Domain.Entities.UnhandledExceptionLog", b =>

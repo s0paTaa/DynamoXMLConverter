@@ -26,7 +26,7 @@ namespace DynamoXMLConverter.Infrastructure.Hangfire.Jobs
         private async Task RemoveExpiredFiles()
         {
             DateTime dateTimeInUtc = DateTime.UtcNow;
-            IEnumerable<JsonFile> expiredJsonFiles = await _fileRepository.GetAllAsNoTracking()
+            IEnumerable<DynamoFile> expiredJsonFiles = await _fileRepository.GetAllAsNoTracking()
                 .Where(f => f.DateExpire < dateTimeInUtc)
                 .ToListAsync();
 

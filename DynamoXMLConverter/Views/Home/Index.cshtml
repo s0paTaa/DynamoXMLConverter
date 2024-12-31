@@ -9,13 +9,13 @@
         <span>Welcome to Dynamo XML to JSON converter</span>
     </div>
     <div class="article">
-        <div class="article-nav">
+@*         <div class="article-nav">
             <ul>
-                <li><a formmethod="get" asp-controller="Preview" asp-action="ShowJsonFile">Preview page</a></li>
-                <li><a formmethod="get" asp-controller="File" asp-action="Download">Download page</a></li>
+                <li><a formmethod="get" asp-controller="Preview" asp-action="ShowJsonFile">Preview</a></li>
+                <li><a formmethod="get" asp-controller="File" asp-action="Download">Download</a></li>
+                <li><a formmethod="get" asp-controller="File" asp-action="Delete">Delete</a></li>
             </ul>
-        </div>
-
+        </div> *@
         <div class="article-header">
             <div class="article-info-card">
                 <div class="info-holder">
@@ -23,10 +23,13 @@
                     <div class="info-text"><span>Information</span></div>
                 </div>
                 <span>
-                    <strong>XML</strong> to <strong>JSON</strong> converter is a simple file conversion app that applies strong validations on the uploaded file
+                    <strong>XML</strong> to <strong>JSON</strong> converter is a simple file conversion app that applies strong validations on the uploaded file.
                     You have options to preview and download your converted file. Current version support only one conversion method,
                     but in the next release will be possible a conversion to <strong>PDF</strong> file. In the above there is a navigation bar that you can use to preview or download
-                    existing file by providing uniqe identifier.
+                    existing file by providing uniqe identifier. If you have already existing files, which are not expired, there is an option to 
+                    <a formmethod="get" asp-controller="Preview" asp-action="ShowJsonFile">Preview</a>,
+                    <a formmethod="get" asp-controller="File" asp-action="Download">Download</a> and
+                    <a formmethod="get" asp-controller="File" asp-action="Delete">Delete</a> file.
                 </span>
             </div>
             <div class="article-warning-card">
@@ -41,12 +44,19 @@
             </div>
         </div>
 
+        <div class="article-nav">
+            <ul>
+                <li onclick="makeConvertSwithcerSelected(this)" class="convert-switch selected" id="xml">XML to JSON</li>
+                <li onclick="makeConvertSwithcerSelected(this)" class="convert-switch" id="json">JSON to XML</li>
+            </ul>
+        </div>
+
         <div class="article-body">
             <div class="article-body-header">
-                <i class="bi bi-filetype-xml"></i>
+                <i class="bi bi-filetype-xml" id="form-icon"></i>
             </div>
             <div class="article-body-form1">
-                <span class="text">Convert XML files</span>
+                <span class="text" id="form-text">Convert XML files</span>
                 <form id="upload-files-form" method="post" enctype="multipart/form-data">
                     <label class="drop-container" id="multiple-files-drop">
                         <span class="drop-title">Drop multiple files here</span>
@@ -59,14 +69,17 @@
                     }
                     <div id="drop-multiple-files-success"><span>Files attached successfully</span></div>
                     <div id="drop-multiple-files-error"><span>Cannot upload a file larger then <strong>4 MB</strong></span></div>
+                    <div id="drop-multiple-files-xml-error"><span>You can upload only XML files</span></div>
+                    <div id="drop-multiple-files-json-error"><span>You can upload only JSON files</span></div>
                     <input value="Upload" class="submit-btn" type="submit" />
                 </form>
             </div>
         </div>
+
         @if (Model.UploadedFiles.Any())
         {
             <div class="article-result-message">
-                <span>Files uploaded successfully. Remember, your files will be active for 10 days, after that they will be automaticaly removed!</span>
+                <span>Files uploaded successfully. Remember, your files will be active for 3 days, after that they will be automaticaly removed!</span>
             </div>
             <div class="article-result-section">
                 @foreach (var file in Model.UploadedFiles)
@@ -84,6 +97,7 @@
                 }
             </div>
         }
+
         <div class="footer">
             <span>DynamoXmlConverter have all rights reserved. &copy;Copyright 2023</span>
             <span>Contact us: <strong>stelyan.nikolov98@gmail.com</strong></span>
@@ -96,10 +110,25 @@
     const multipleFilesInput = document.getElementById("multiple-files-input");
     const multipleFilesSuccessMessage = document.getElementById("drop-multiple-files-success");
     const multipleFilesErrorMessage = document.getElementById("drop-multiple-files-error");
+    const multipleFilesXmlErrorMessage = document.getElementById("drop-multiple-files-xml-error");
+    const multipleFilesJsonErrorMessage = document.getElementById("drop-multiple-files-json-error");
     const uploadFilesForm = document.getElementById("upload-files-form");
+    const xmlToJson = {
+            headerIconClass: "bi bi-filetype-xml",
+            formText: "Convert XML files",
+            formAccept: "text/xml"
+    };
+    const jsonToXml = {
+            headerIconClass: "bi bi-filetype-json",
+            formText: "Convert JSON files",
+            formAccept: "application/json"
+    };
+    const acceptedFileContentTypes = [xmlToJson.formAccept, jsonToXml.formAccept];
 
     hideElement(multipleFilesErrorMessage);
     hideElement(multipleFilesSuccessMessage);
+    hideElement(multipleFilesXmlErrorMessage);
+    hideElement(multipleFilesJsonErrorMessage);
 
     multipleFilesInput.onchange = function(e) {
         toggleUploadErrorMessage(multipleFilesInput.files);
@@ -107,20 +136,37 @@
     };
 
     multipleFilesDropContainer.addEventListener("dragover", (e) => {
-        e.preventDefault()
+        e.preventDefault();
     }, false);
 
     multipleFilesDropContainer.addEventListener("drop", (e) => {
-        e.preventDefault()
+        e.preventDefault();
         multipleFilesInput.files = e.dataTransfer.files;
 
         toggleUploadErrorMessage(multipleFilesInput.files);
         toggleUploadSuccessMessage(multipleFilesInput.files);
-    });
+    }, false);
 
     function toggleUploadErrorMessage(files) {
-        var array = Array.from(files);
+        const expectedContentType = multipleFilesInput.getAttribute("accept");
+        let array = Array.from(files);
+        let doesAllElementsHaveRightContentType = array.every(el => el.type === expectedContentType);
+
         hideElement(multipleFilesErrorMessage);
+        hideElement(multipleFilesXmlErrorMessage);
+        hideElement(multipleFilesJsonErrorMessage);
+
+        if (!doesAllElementsHaveRightContentType) {
+            uploadFilesForm.reset();
+
+            if (expectedContentType === xmlToJson.formAccept) {
+                showElement(multipleFilesXmlErrorMessage);
+            }
+            
+            if (expectedContentType === jsonToXml.formAccept) {
+                showElement(multipleFilesJsonErrorMessage);
+            }
+        }
 
         array.forEach(f => {
             const fileSize = (f.size / 1024 / 1024).toFixed(4) // Get the file size in MB
@@ -133,9 +179,12 @@
         });
     }
 
-    function toggleUploadSuccessMessage(files){
+    function toggleUploadSuccessMessage(files) {
         if (files.length > 0) {
             showElement(multipleFilesSuccessMessage);
+            hideElement(multipleFilesErrorMessage);
+            hideElement(multipleFilesXmlErrorMessage);
+            hideElement(multipleFilesJsonErrorMessage);
         }
         else {
             hideElement(multipleFilesSuccessMessage);
@@ -148,6 +197,41 @@
 
     function hideElement(element) {
         element.style.display = "none";
+    }
+
+    function makeConvertSwithcerSelected(element) {
+        if (element.classList.contains("selected")){
+            return;
+        }
+
+        Array.from(document.getElementsByClassName("convert-switch")).forEach(obj => {
+            obj.classList.remove("selected");
+        });
+
+        element.classList.add("selected");
+
+        if (element.id == "xml") {
+            updateFormWhenConvertSwitcherIsSelected(xmlToJson);
+        }
+        else if (element.id == "json") {
+            updateFormWhenConvertSwitcherIsSelected(jsonToXml);
+        }
+    }
+
+    function updateFormWhenConvertSwitcherIsSelected(data) {
+        uploadFilesForm.reset();
+        hideElement(multipleFilesSuccessMessage);
+        hideElement(multipleFilesErrorMessage);
+        hideElement(multipleFilesXmlErrorMessage);
+        hideElement(multipleFilesJsonErrorMessage);
+
+        let formIcon = document.getElementById("form-icon");
+        let formText = document.getElementById("form-text");
+        let formInput = document.getElementById("multiple-files-input");
+
+        formIcon.className = data.headerIconClass;
+        formText.innerHTML = data.formText;
+        formInput.setAttribute("accept", data.formAccept);
     }
 </script>
 

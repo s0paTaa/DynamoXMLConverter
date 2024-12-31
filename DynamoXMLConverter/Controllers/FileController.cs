@@ -3,6 +3,7 @@ using DynamoXMLConverter.Domain.Models.Shared;
 using DynamoXMLConverter.Domain.Services;
 using DynamoXMLConverter.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace DynamoXMLConverter.Controllers
@@ -39,9 +40,9 @@ namespace DynamoXMLConverter.Controllers
                 return RedirectToAction("Download");
             }
 
-            byte[] fileBytes = Encoding.ASCII.GetBytes(file.JsonText);
+            byte[] fileBytes = Encoding.UTF8.GetBytes(file.Text);
 
-            return File(fileBytes, "application/download", file.FileName);
+            return File(fileBytes, file.ContentType, string.Concat(file.FileName, file.Extension));
         }
 
         [HttpPost]
