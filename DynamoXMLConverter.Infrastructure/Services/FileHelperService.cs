@@ -1,6 +1,7 @@
 ﻿using DynamoXMLConverter.Domain;
 using DynamoXMLConverter.Domain.Models.Shared;
 using DynamoXMLConverter.Domain.Services;
+using DynamoXMLConverter.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Http;
 using nClam;
 using System.Net;
@@ -10,11 +11,13 @@ namespace DynamoXMLConverter.Infrastructure.Services
     public class FileHelperService : IFileHelperService
     {
         private readonly IClamClient _clamClient;
-        private readonly string[] _possibleFileExtensions = Constants.File.AllowedMimeTypes.Values.ToArray();
+        private readonly List<string> _possibleFileExtensions = [];
 
         public FileHelperService(IClamClient clamClient)
         {
             _clamClient = clamClient ?? throw new ArgumentNullException(nameof(clamClient));
+            _possibleFileExtensions.AddRange(Constants.File.MimeTypes.Xml.Extensions);
+            _possibleFileExtensions.AddRange(Constants.File.MimeTypes.Json.Extensions);
         }
 
         public async Task<BaseResponseModel> ValidateUploadedFiles(IEnumerable<IFormFile> formFiles)
@@ -71,11 +74,11 @@ namespace DynamoXMLConverter.Infrastructure.Services
 
             await file.CopyToAsync(stream);
 
-            //if (await _clamClient.ValidateFileStream(stream) == false)
-            //{
-            //    responseModel.ErrorMessage = $"Virus detected in {trustedFileName}";
-            //    return responseModel;
-            //}
+            if (await _clamClient.ValidateFileStream(stream) == false)
+            {
+                responseModel.ErrorMessage = $"Virus detected in {trustedFileName}";
+                return responseModel;
+            }
 
             responseModel.IsSucceed = true;
 

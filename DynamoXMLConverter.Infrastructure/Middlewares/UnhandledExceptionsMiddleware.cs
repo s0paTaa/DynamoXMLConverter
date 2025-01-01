@@ -57,7 +57,7 @@ namespace DynamoXMLConverter.Infrastructure.Middlewares
                         ContractResolver = new CamelCasePropertyNamesContractResolver()
                     });
                 }
-
+                // Redirect to error page
                 await httpContext.Response.WriteAsync(message, System.Text.Encoding.ASCII);
             }
         }

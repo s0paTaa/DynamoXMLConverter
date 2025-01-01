@@ -2,18 +2,28 @@
 
 namespace DynamoXMLConverter.Domain
 {
-    public static class Constants
+    public class Constants
     {
         public static class File
         {
             public const long MultipartBodyLengthInBytes = 268435456; // 256 MB
             public const long MultipartBodyLengthForFileInBytes = 4194304; // 4 MB
             public const int FileLifetimeInDays = 3;
-            public static readonly Dictionary<string, string> AllowedMimeTypes = new() 
-            { 
-                { "application/json", ".json" },
-                { "text/xml", ".xml" }
-            };
+
+            public static class MimeTypes
+            {
+                public static class Xml
+                {
+                    public const string ContentType = "text/xml";
+                    public static readonly string[] Extensions = [".xml"];
+                }
+
+                public static class Json
+                {
+                    public const string ContentType = "application/json";
+                    public static readonly string[] Extensions = [".json"];
+                }
+            }
 
             public static class RouteParams
             {

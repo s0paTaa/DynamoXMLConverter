@@ -71,36 +71,29 @@ namespace DynamoXMLConverter.Infrastructure.Services
                 string fileNameWithoutExtension = file.FileName.Split('.')[0];
                 string convertedText, targetContentType, targetExtension;
 
-                if (Constants.File.AllowedMimeTypes.ContainsKey(file.ContentType))
+                switch (file.ContentType)
                 {
-                    switch (file.ContentType)
-                    {
-                        case "application/json":
-                            convertedText = await ConvertJsonFileToXml(file);
-                            targetContentType = "text/xml";
-                            targetExtension = ".xml";
-                            break;
-                        case "text/xml":
-                            convertedText = await ConvertXmlFileToJson(file);
-                            targetContentType = "application/json";
-                            targetExtension = ".json";
-                            break;
-                        default:
-                            throw new Exception("Invalid contentType");
-                    }
+                    case Constants.File.MimeTypes.Json.ContentType:
+                        convertedText = await ConvertJsonFileToXml(file);
+                        targetContentType = Constants.File.MimeTypes.Xml.ContentType;
+                        targetExtension = Constants.File.MimeTypes.Xml.Extensions[0];
+                        break;
+                    case Constants.File.MimeTypes.Xml.ContentType:
+                        convertedText = await ConvertXmlFileToJson(file);
+                        targetContentType = Constants.File.MimeTypes.Json.ContentType;
+                        targetExtension = Constants.File.MimeTypes.Json.Extensions[0];
+                        break;
+                    default:
+                        throw new Exception("Invalid contentType");
+                }
 
-                    convertedFiles.Add(new DynamoFileModel
-                    {
-                        FileName = fileNameWithoutExtension,
-                        Text = convertedText,
-                        ContentType = targetContentType,
-                        Extension = targetExtension
-                    });
-                }
-                else
+                convertedFiles.Add(new DynamoFileModel
                 {
-                    throw new Exception("Invalid contentType");
-                }
+                    FileName = fileNameWithoutExtension,
+                    Text = convertedText,
+                    ContentType = targetContentType,
+                    Extension = targetExtension
+                });
             }
 
             foreach (var file in convertedFiles)
@@ -121,7 +114,6 @@ namespace DynamoXMLConverter.Infrastructure.Services
             return responseModel;
         }
 
-        // Add try catch and logging
         #region PrivateMethods
         private async Task<string> ConvertXmlFileToJson(IFormFile file)
         {
@@ -138,9 +130,8 @@ namespace DynamoXMLConverter.Infrastructure.Services
         {
             using StreamReader reader = new(file.OpenReadStream());
             string json = await reader.ReadToEndAsync();      
-            XmlDocument? xmlDoc = JsonConvert.DeserializeXmlNode(json);
 
-            return xmlDoc.InnerXml;
+            return JsonConvert.DeserializeXmlNode(json).InnerXml;
         }
         #endregion
     }

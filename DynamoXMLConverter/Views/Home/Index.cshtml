@@ -9,13 +9,6 @@
         <span>Welcome to Dynamo XML to JSON converter</span>
     </div>
     <div class="article">
-@*         <div class="article-nav">
-            <ul>
-                <li><a formmethod="get" asp-controller="Preview" asp-action="ShowJsonFile">Preview</a></li>
-                <li><a formmethod="get" asp-controller="File" asp-action="Download">Download</a></li>
-                <li><a formmethod="get" asp-controller="File" asp-action="Delete">Delete</a></li>
-            </ul>
-        </div> *@
         <div class="article-header">
             <div class="article-info-card">
                 <div class="info-holder">
@@ -24,12 +17,12 @@
                 </div>
                 <span>
                     <strong>XML</strong> to <strong>JSON</strong> converter is a simple file conversion app that applies strong validations on the uploaded file.
-                    You have options to preview and download your converted file. Current version support only one conversion method,
-                    but in the next release will be possible a conversion to <strong>PDF</strong> file. In the above there is a navigation bar that you can use to preview or download
-                    existing file by providing uniqe identifier. If you have already existing files, which are not expired, there is an option to 
-                    <a formmethod="get" asp-controller="Preview" asp-action="ShowJsonFile">Preview</a>,
+                    You have options to 
+                    <a formmethod="get" asp-controller="Preview" asp-action="ShowJsonFile">Preview</a>, 
                     <a formmethod="get" asp-controller="File" asp-action="Download">Download</a> and
-                    <a formmethod="get" asp-controller="File" asp-action="Delete">Delete</a> file.
+                    <a formmethod="get" asp-controller="File" asp-action="Delete">Delete</a> your converted file.
+                    In those pages you will need the file unique identifier, which will be displayed when you convert it from the form.
+                    Current version support two conversion methods, from XML to JSON and vice versa.
                 </span>
             </div>
             <div class="article-warning-card">
@@ -71,7 +64,7 @@
                     <div id="drop-multiple-files-error"><span>Cannot upload a file larger then <strong>4 MB</strong></span></div>
                     <div id="drop-multiple-files-xml-error"><span>You can upload only XML files</span></div>
                     <div id="drop-multiple-files-json-error"><span>You can upload only JSON files</span></div>
-                    <input value="Upload" class="submit-btn" type="submit" />
+                    <input value="Convert" class="submit-btn" type="submit" />
                 </form>
             </div>
         </div>
@@ -92,6 +85,7 @@
                         <div class="buttons">
                             <input asp-controller="Preview" asp-action="ShowJsonFile" class="preview" type="submit" value="Preview" />
                             <input asp-controller="File" asp-action="Download" class="download" type="submit" value="Download" />
+                            <input asp-controller="File" asp-action="Delete" class="delete" type="submit" value="Delete" />
                         </div>
                     </form>
                 }
