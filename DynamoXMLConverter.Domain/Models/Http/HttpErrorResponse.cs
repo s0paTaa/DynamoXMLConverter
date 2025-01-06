@@ -4,6 +4,8 @@ namespace DynamoXMLConverter.Domain.Models.Http
 {
     public class HttpErrorResponse
     {
+        public HttpErrorResponse() { }
+
         public HttpErrorResponse(string code)
         {
             Code = code;

@@ -1,22 +1,35 @@
-﻿@using DynamoXMLConverter.Models.Home;
-@model ErrorViewModel;
+﻿@using DynamoXMLConverter.Domain.Models.Http
+@model HttpErrorResponse;
 @{
     ViewData["Title"] = "Error";
 }
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
+<div class="error-holder-section">
+    <div class="header-text">
+        <span class="text-danger">An error occurred while processing your request.</span>
+    </div>
 
-@if (!string.IsNullOrEmpty(Model.ErrorMessage))
-{
-    <p>
-        <strong>Error message:</strong> <code>@Model.ErrorMessage</code>
-    </p>
-}
+    <div class="article">
+        <div class="article-header">
+            <div class="home-button-holder">
+                <a formmethod="get" asp-controller="Home" asp-action="Index">Home page</a>
+            </div>
+        </div>
 
-@if (Model.StatusCode > 0)
-{
-    <p>
-        <strong>Status code:</strong> <code>@Model.StatusCode</code>
-    </p>
-}
+        <div class="article-body">
+            @if (!string.IsNullOrEmpty(Model.Message))
+            {
+                <div>
+                    <strong>Message:</strong> <code>@Model.Message</code>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.Code))
+            {
+                <div>
+                    <strong>Status code:</strong> <code>@Model.Code</code>
+                </div>
+            }
+        </div>
+    </div>
+</div>

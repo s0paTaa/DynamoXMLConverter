@@ -63,5 +63,10 @@ namespace DynamoXMLConverter.Domain
                 public const string RemoveExpiredFilesJobName = "Remove Expired Files Job";
             }
         }
+
+        public static class Cookies
+        {
+            public const string ErrorFromMiddleware = "ErrorFromMiddleware";
+        }
     }
 }

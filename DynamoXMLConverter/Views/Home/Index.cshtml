@@ -6,7 +6,7 @@
 
 <div class="main-section">
     <div class="header-text">
-        <span>Welcome to Dynamo XML to JSON converter</span>
+        <span>Welcome to XML to JSON converter</span>
     </div>
     <div class="article">
         <div class="article-header">
@@ -18,9 +18,8 @@
                 <span>
                     <strong>XML</strong> to <strong>JSON</strong> converter is a simple file conversion app that applies strong validations on the uploaded file.
                     You have options to 
-                    <a formmethod="get" asp-controller="Preview" asp-action="ShowJsonFile">Preview</a>, 
-                    <a formmethod="get" asp-controller="File" asp-action="Download">Download</a> and
-                    <a formmethod="get" asp-controller="File" asp-action="Delete">Delete</a> your converted file.
+                    <a formmethod="get" asp-controller="Preview" asp-action="ShowJsonFile">Preview</a> and
+                    <a formmethod="get" asp-controller="File" asp-action="Download">Download</a> your converted file.
                     In those pages you will need the file unique identifier, which will be displayed when you convert it from the form.
                     Current version support two conversion methods, from XML to JSON and vice versa.
                 </span>
@@ -85,7 +84,6 @@
                         <div class="buttons">
                             <input asp-controller="Preview" asp-action="ShowJsonFile" class="preview" type="submit" value="Preview" />
                             <input asp-controller="File" asp-action="Download" class="download" type="submit" value="Download" />
-                            <input asp-controller="File" asp-action="Delete" class="delete" type="submit" value="Delete" />
                         </div>
                     </form>
                 }
@@ -93,7 +91,7 @@
         }
 
         <div class="footer">
-            <span>DynamoXmlConverter have all rights reserved. &copy;Copyright 2023</span>
+            <span>Xml to JSON Converter have all rights reserved. &copy;Copyright 2023</span>
             <span>Contact us: <strong>stelyan.nikolov98@gmail.com</strong></span>
         </div>
     </div>

@@ -31,20 +31,22 @@ body {
 
 .container .main-section, 
 .container .download-main-section,
-.container .preview-main-section {
+.container .preview-main-section,
+.container .error-holder-section {
     width: 100%;
     display: grid;
 }
 
-.container .main-section .article .footer {
+.container .main-section .article .footer, 
+.container .download-main-section .article .footer, 
+.container .preview-main-section .article .footer {
     margin-top: 5em;
-    margin-bottom: 2em;
     display: grid;
     width: 100%;
     display: grid;
     row-gap: 1em;
     background-color: #FFF;
-    border-radius: 0.4em;
+    border-radius: 0.4em 0.4em 0 0;
     padding: 1rem 1.5rem;
     font-family: 'Lucida Console';
     font-size: 0.82em;
@@ -52,7 +54,8 @@ body {
 
 .container .main-section .header-text,
 .container .download-main-section .header-text,
-.container .preview-main-section .header-text {
+.container .preview-main-section .header-text, 
+.container .error-holder-section .header-text {
     text-align: center;
     margin-bottom: 2%;
     margin-top: 2%;
@@ -60,7 +63,8 @@ body {
 
 .container .main-section .header-text span,
 .container .download-main-section .header-text span,
-.container .preview-main-section .header-text span {
+.container .preview-main-section .header-text span, 
+.container .error-holder-section .header-text span {
     font-family: 'Lucida Console';
     font-size: 1.9em;
     margin: auto;
@@ -70,16 +74,12 @@ body {
 
 .container .main-section .article,
 .container .download-main-section .article,
-.container .preview-main-section .article {
+.container .preview-main-section .article,
+.container .error-holder-section .article {
     margin: auto;
     width: 80%;
     display: grid;
     row-gap: 2em;
-}
-
-.container .download-main-section .article,
-.container .preview-main-section .article {
-    margin-bottom: 2em;
 }
 
 .container .main-section .article .article-nav {
@@ -117,20 +117,23 @@ body {
 
 .container .main-section .article .article-header,
 .container .download-main-section .article .article-header,
-.container .preview-main-section .article .article-header {
+.container .preview-main-section .article .article-header,
+.container .error-holder-section .article .article-header {
     width: 100%;
     display: grid;
     row-gap: 1.2em;
 }
 
 .container .download-main-section .article .article-header .home-button-holder,
-.container .preview-main-section .article .article-header .home-button-holder {
+.container .preview-main-section .article .article-header .home-button-holder,
+.container .error-holder-section .article .article-header .home-button-holder {
     display: flex;
     float: left;
 }
 
 .container .download-main-section .article .article-header .home-button-holder a,
-.container .preview-main-section .article .article-header .home-button-holder a{
+.container .preview-main-section .article .article-header .home-button-holder a,
+.container .error-holder-section .article .article-header .home-button-holder a {
     background-color: #4dc3ff;
     color: white;
     text-align: center;
@@ -140,7 +143,8 @@ body {
 }
 
 .container .download-main-section .article .article-header .home-button-holder a:hover,
-.container .preview-main-section .article .article-header .home-button-holder a:hover {
+.container .preview-main-section .article .article-header .home-button-holder a:hover,
+.container .error-holder-section .article .article-header .home-button-holder a:hover {
     background-color: gray;
     transition: 0.2s;
 }
@@ -207,7 +211,8 @@ body {
 
 .container .main-section .article .article-body,
 .container .download-main-section .article .article-body,
-.container .preview-main-section .article .article-body {
+.container .preview-main-section .article .article-body,
+.container .error-holder-section .article .article-body {
     width: 100%;
     display: grid;
     row-gap: 1em;

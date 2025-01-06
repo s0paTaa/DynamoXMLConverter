@@ -45,27 +45,6 @@ namespace DynamoXMLConverter.Controllers
             return File(fileBytes, file.ContentType, string.Concat(file.FileName, file.Extension));
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Delete([FromForm] string identifier)
-        {
-            if (Guid.TryParse(identifier, out Guid value) == false)
-            {
-                TempData[Constants.File.RouteParams.ErrorMessage] = Constants.File.ErrorMessages.InvalidIdentifier;
-                return RedirectToAction("Download");
-            }
-
-            bool isDeleteSuccessful = await _fileService.DeleteByIdentifier(value);
-
-            if (!isDeleteSuccessful)
-            {
-                TempData[Constants.File.RouteParams.ErrorMessage] = Constants.File.ErrorMessages.FileNotFound;
-                return RedirectToAction("Download");
-            }
-
-            TempData[Constants.File.RouteParams.DeleteSuccessMessage] = Constants.File.SuccessMessages.DeleteSuccessMessage;
-            return RedirectToAction("Download");
-        }
-
         private BaseResponseModel InitializeModel()
         {
             var model = new BaseResponseModel();

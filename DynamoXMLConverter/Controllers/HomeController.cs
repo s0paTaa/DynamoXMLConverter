@@ -1,10 +1,14 @@
 ﻿using DynamoXMLConverter.Domain;
 using DynamoXMLConverter.Domain.Models.File;
+using DynamoXMLConverter.Domain.Models.Http;
 using DynamoXMLConverter.Domain.Services;
 using DynamoXMLConverter.Infrastructure.Extensions;
 using DynamoXMLConverter.Models.Home;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
+using System.Net;
+using System.Web;
 
 namespace DynamoXMLConverter.Controllers
 {
@@ -39,10 +43,16 @@ namespace DynamoXMLConverter.Controllers
             return RedirectToAction("Index");
         }
 
-        [HttpGet]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { });
+            if (Request.Cookies.TryGetValue(Constants.Cookies.ErrorFromMiddleware, out string? res))
+            {
+                Response.Cookies.Delete(Constants.Cookies.ErrorFromMiddleware);
+                HttpErrorResponse? errorResponse = JsonConvert.DeserializeObject<HttpErrorResponse>(HttpUtility.UrlDecode(res));
+                return View(errorResponse ?? new HttpErrorResponse("500", "Something went wrong!"));
+            }
+
+            return RedirectToActionPermanent("Index");
         }
 
         private HomePageDisplayModel InitializeModel() 

@@ -30,9 +30,12 @@ namespace DynamoXMLConverter.Infrastructure.Extensions
 
             ConfigureHangfireJobs(container);
 
+            app.MapRazorPages();
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+
+            app.UseHsts();
 
             return app;
         }

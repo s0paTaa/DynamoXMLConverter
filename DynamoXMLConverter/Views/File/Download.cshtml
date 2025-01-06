@@ -40,26 +40,17 @@
                     <span>@Model.ErrorMessage</span>
                 </div>
             }
-
-            <form method="post">
-                <span>Delete your file</span>
-                <div class="inputs">
-                    <input placeholder="Enter identifier here" type="text" name="identifier" required />
-                    <input asp-action="Delete" type="submit" value="Delete" />
-                </div>
-            </form>
-            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-            {
-                <div class="input-error">
-                    <span>@Model.ErrorMessage</span>
-                </div>
-            }
             @if (!string.IsNullOrEmpty(Model.SuccessMessage))
             {
                 <div class="input-success">
                     <span>@Model.SuccessMessage</span>
                 </div>
             }
+        </div>
+
+        <div class="footer">
+            <span>Xml to JSON Converter have all rights reserved. &copy;Copyright 2023</span>
+            <span>Contact us: <strong>stelyan.nikolov98@gmail.com</strong></span>
         </div>
     </div>
 </div>

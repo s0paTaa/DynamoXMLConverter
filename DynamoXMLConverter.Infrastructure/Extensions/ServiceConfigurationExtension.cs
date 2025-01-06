@@ -18,6 +18,7 @@ namespace DynamoXMLConverter.Infrastructure.Extensions
         public static IServiceCollection RegisterAppServices(this IServiceCollection services, Container container, ConfigurationManager configuration)
         {
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
+            services.AddRazorPages();
             services.Configure<FormOptions>(options =>
             {
                 options.MultipartBodyLengthLimit = Constants.File.MultipartBodyLengthInBytes;

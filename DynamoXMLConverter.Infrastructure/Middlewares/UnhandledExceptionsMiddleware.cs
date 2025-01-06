@@ -1,12 +1,13 @@
-﻿using DynamoXMLConverter.Domain.DependencyResolver;
-using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json;
-using System.Net;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-using DynamoXMLConverter.Domain.Models.Http;
+﻿using DynamoXMLConverter.Domain;
+using DynamoXMLConverter.Domain.DependencyResolver;
 using DynamoXMLConverter.Domain.Logging;
+using DynamoXMLConverter.Domain.Models.Http;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using System.Net;
+using System.Web;
 
 namespace DynamoXMLConverter.Infrastructure.Middlewares
 {
@@ -31,34 +32,25 @@ namespace DynamoXMLConverter.Infrastructure.Middlewares
             }
             catch (Exception ex)
             {
-                var logger = _resolver.GetService<IDynamoLogger>();
+                IDynamoLogger logger = _resolver.GetService<IDynamoLogger>();
 
                 // Log exception in the database
                 await logger.LogException(ex);
 
+                string message = JsonConvert.SerializeObject(new HttpErrorResponse("500", ex.Message), Formatting.Indented, new JsonSerializerSettings
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                });
+
                 httpContext.Response.ContentType = "application/json";
                 httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                string message = string.Empty;
-                
-                if (_enviroment.IsProduction())
+                httpContext.Response.Cookies.Append(Constants.Cookies.ErrorFromMiddleware, HttpUtility.UrlEncode(message), new CookieOptions 
                 {
-                    message = JsonConvert.SerializeObject(new HttpErrorResponse("server_error", "Something went wrong"), Formatting.Indented, new JsonSerializerSettings
-                    {
-                        ContractResolver = new CamelCasePropertyNamesContractResolver()
-                    });
-                }
-                else
-                {
-                    message = JsonConvert.SerializeObject(
-                        new HttpErrorResponse("server_error", new HttpMessageModel(ex.Message, ex.StackTrace)), 
-                        Formatting.Indented, 
-                        new JsonSerializerSettings
-                    {
-                        ContractResolver = new CamelCasePropertyNamesContractResolver()
-                    });
-                }
-                // Redirect to error page
-                await httpContext.Response.WriteAsync(message, System.Text.Encoding.ASCII);
+                    Secure = true,
+                    HttpOnly = true,
+                    MaxAge = TimeSpan.FromSeconds(10)
+                });
+                httpContext.Response.Redirect("Home/Error", true);
             }
         }
     }
