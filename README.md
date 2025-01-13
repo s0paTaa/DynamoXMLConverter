@@ -9,13 +9,13 @@ which is needed to find the existing file and preview section desinged a little 
 <ul>
   <li>Size limit per file is <strong>4 MB</strong></li>
   <li>Maximum size limit of all uploaded files is <strong>256 MB</strong></li>
-  <li>Form accepts only <strong>XML</strong> files</li>
+  <li>Form accepts <strong>XML</strong> and <strong>JSON</strong> files</li>
   <li>Files with some ransome malware will be repelled</li>
 </ul>
 <h3>Functionalities</h3>
 <ul>
   <li>File validation for size, type, virus and extension</li>
-  <li>SQL database storage for all uploaded files until they expire. <strong>Expiration time is 10 days</strong></li>
+  <li>SQL database storage for all uploaded files until they expire. <strong>Expiration time is 3 days</strong></li>
   <li>ClamAv antimalware detector. <strong>Require installation and configuration</strong></li>
   <li>Hangfire job, executed on every hour to check for expired files and to remove them from database</li>
   <li>File conversion from XML to JSON using Newtonsoft.Json</li>
